@@ -12,22 +12,15 @@ import java.util.*;
 
 public class EasyDB {
 
-    String url = "jdbc:derby:/Users/laukvik/Db/Derby;create=true";
-    String user = "";
-    String password = "";
-    Connection connection;
-    DatabaseType databaseType = DatabaseType.ApacheDerby;
-    private final static String SQL_SELECT = "SELECT * FROM ?";
+    private Connection connection;
+    private DatabaseType databaseType;
 
-    public EasyDB() {
-        try {
-            connection = DriverManager.getConnection(url, user, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public EasyDB(DatabaseType databaseType, Connection connection) {
+        this.connection = connection;
+        this.databaseType = databaseType;
     }
 
-    public Connection getConnection() {
+    private Connection getConnection() {
         return connection;
     }
 
@@ -38,7 +31,7 @@ public class EasyDB {
         throw new NoEntityException("Class is no valid entity: " + klass.getName());
     }
 
-    public static String getTableName(Class klass) {
+    private String getTableName(Class klass) {
         return getModel(klass).table();
     }
 
@@ -58,7 +51,7 @@ public class EasyDB {
         return map.get(model.id());
     }
 
-    public Object createNew(Class klass) {
+    private Object createNew(Class klass) {
         try {
             return klass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException e) {

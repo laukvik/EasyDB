@@ -25,7 +25,6 @@ public class Query<K> {
     }
 
     public PreparedStatement getPreparedStatement(Connection connection) throws SQLException {
-        System.out.println(toSQL());
         PreparedStatement st = connection.prepareStatement(toSQL(), PreparedStatement.NO_GENERATED_KEYS);
         st.setInt(1, 0);
         int index = 1;
@@ -38,7 +37,7 @@ public class Query<K> {
 
     public String toSQL() {
         StringBuffer buffer = new StringBuffer();
-        String tableName = EasyDB.getTableName(klass);
+        String tableName = EasyDB.getModel(klass).table();
         buffer.append("SELECT * FROM " + tableName + " ");
         if (!columns.isEmpty()) {
             buffer.append("WHERE ");

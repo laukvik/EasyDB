@@ -4,18 +4,18 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import static no.laukvik.easydb.EasyDB.getModel;
-import static no.laukvik.easydb.EasyDB.getTableName;
 
 public class DDL {
 
     public static String deleteTable(Class klass) {
-        String table = getTableName(klass);
+        DatabaseModel model = getModel(klass);
+        String table = model.table();
         return "DROP TABLE " + table;
     }
 
     public static String createTable(Class klass) {
-        String table = getTableName(klass);
         DatabaseModel model = getModel(klass);
+        String table = model.table();
         HashMap<String, Field> map = Mapper.extractFields(klass);
         StringBuffer buffer = new StringBuffer(4000);
         int index = 0;

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
@@ -19,8 +21,12 @@ class EasyDBTest {
     EasyDB db;
 
     @BeforeAll
-    void before() {
-        db = new EasyDB();
+    void before() throws SQLException {
+        String url = "jdbc:derby:./target/Derby;create=true";
+        String user = "";
+        String password = "";
+        Connection connection = DriverManager.getConnection(url, user, password);
+        db = new EasyDB(DatabaseType.ApacheDerby, connection);
         try {
             db.deleteModel(Employee.class);
         } catch (SQLException e) {
@@ -40,11 +46,10 @@ class EasyDBTest {
 
     @Test
     void shouldFindAnnotation() {
-        assertEquals("EMPLOYEE", EasyDB.getTableName(Employee.class));
+        assertEquals("EMPLOYEE", EasyDB.getModel(Employee.class).table());
         assertThrows(NoEntityException.class, () -> {
-            EasyDB.getTableName(String.class);
+            EasyDB.getModel(String.class).table();
         });
-
     }
 
     @Test
@@ -62,6 +67,13 @@ class EasyDBTest {
     @Test
     void shouldRemoveAll() {
         assertDoesNotThrow(() ->  db.removeAll(Employee.class) );
+    }
+
+    @Test
+    void shouldNotAdd() {
+        assertThrows(NoEntityException.class, () -> {
+            db.add(String.class);
+        });
     }
 
     @Test
