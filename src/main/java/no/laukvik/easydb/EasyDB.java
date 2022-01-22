@@ -236,7 +236,7 @@ public class EasyDB {
 
     public List findByQuery(Query query) throws SQLException {
         HashMap<String, Field> map = Mapper.extractFields(query.getQueryClass());
-        PreparedStatement st = query.getPreparedStatement(getConnection());
+        PreparedStatement st = query.getPreparedStatement(databaseType, getConnection());
         ResultSet rs = st.executeQuery();
         List list = new ArrayList();
         while (rs.next()) {

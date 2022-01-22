@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class QueryTest {
 
     Query mockQuery(){
-
         Query query = new Query(Employee.class)
                 .where("EMPLOYEE_NR", Comparison.Equal, 12)
                 .sort("EMPLOYEE_NR", Ascending)
@@ -27,7 +26,8 @@ class QueryTest {
     @Test
     void shouldLimit() {
         Query query = new Query(Employee.class).limit(5);
-        assertEquals("SELECT * FROM EMPLOYEE FETCH FIRST 5 ROWS ONLY", query.toSQL());
+        assertEquals("SELECT * FROM EMPLOYEE FETCH FIRST 5 ROWS ONLY", query.toSQL(DatabaseType.ApacheDerby));
+        assertEquals("SELECT * FROM EMPLOYEE LIMIT 5", query.toSQL(DatabaseType.Postgres));
     }
 
     @Test
@@ -35,7 +35,7 @@ class QueryTest {
         Query query = new Query(Employee.class)
                 .sort("ID", Ascending)
                 .sort("CASH", Descending);
-        assertEquals("SELECT * FROM EMPLOYEE ORDER BY ID ASC, CASH DESC", query.toSQL());
+        assertEquals("SELECT * FROM EMPLOYEE ORDER BY ID ASC, CASH DESC", query.toSQL(DatabaseType.ApacheDerby));
     }
 
     @Test
@@ -44,7 +44,7 @@ class QueryTest {
             .where("FIRST_NAME", Comparison.Equal, "Bill")
             .where("CASH", Comparison.GreaterThan, 350);
 
-        assertEquals("SELECT * FROM EMPLOYEE WHERE FIRST_NAME = ? AND CASH > ?", query.toSQL());
+        assertEquals("SELECT * FROM EMPLOYEE WHERE FIRST_NAME = ? AND CASH > ?", query.toSQL(DatabaseType.ApacheDerby));
     }
 
     @Test

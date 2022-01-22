@@ -24,8 +24,8 @@ public class Query<K> {
         return klass;
     }
 
-    public PreparedStatement getPreparedStatement(Connection connection) throws SQLException {
-        PreparedStatement st = connection.prepareStatement(toSQL(), PreparedStatement.NO_GENERATED_KEYS);
+    public PreparedStatement getPreparedStatement(DatabaseType databaseType, Connection connection) throws SQLException {
+        PreparedStatement st = connection.prepareStatement(toSQL(databaseType), PreparedStatement.NO_GENERATED_KEYS);
         st.setInt(1, 0);
         int index = 1;
         for (WhereColumn it : columns) {
@@ -35,7 +35,7 @@ public class Query<K> {
         return st;
     }
 
-    public String toSQL() {
+    public String toSQL(DatabaseType databaseType) {
         StringBuffer buffer = new StringBuffer();
         String tableName = EasyDB.getModel(klass).table();
         buffer.append("SELECT * FROM " + tableName + " ");
@@ -64,8 +64,12 @@ public class Query<K> {
             buffer.append(" ");
         }
         if (limit != null) {
-//            buffer.append("LIMIT " + limit); // postgres
-            buffer.append("FETCH FIRST " + limit + " ROWS ONLY ");
+            if (databaseType == DatabaseType.Postgres){
+                buffer.append("LIMIT " + limit);
+            }
+            if (databaseType == DatabaseType.ApacheDerby){
+                buffer.append("FETCH FIRST " + limit + " ROWS ONLY ");
+            }
         }
         return buffer.toString().trim();
     }
