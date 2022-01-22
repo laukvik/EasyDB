@@ -18,7 +18,7 @@ CREATE TABLE EMPLOYEE (
 */
 
 // https://www.postgresql.org/docs/9.5/datatype.html
-@DatabaseModel(table="EMPLOYEE", id="ID", auto=true)
+@Model(table="EMPLOYEE", id="ID", auto=true)
 public class Employee {
 
     @IntegerValue(column = "ID")

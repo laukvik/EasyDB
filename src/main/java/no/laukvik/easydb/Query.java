@@ -1,5 +1,7 @@
 package no.laukvik.easydb;
 
+import no.laukvik.easydb.exception.QueryException;
+
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,11 +22,11 @@ public class Query<K> {
         this.map = Mapper.extractFields(klass);
     }
 
-    public Class<K> getQueryClass() {
+    Class<K> getQueryClass() {
         return klass;
     }
 
-    public PreparedStatement getPreparedStatement(DatabaseType databaseType, Connection connection) throws SQLException {
+    PreparedStatement getPreparedStatement(DatabaseType databaseType, Connection connection) throws SQLException {
         PreparedStatement st = connection.prepareStatement(toSQL(databaseType), PreparedStatement.NO_GENERATED_KEYS);
         st.setInt(1, 0);
         int index = 1;
@@ -35,7 +37,7 @@ public class Query<K> {
         return st;
     }
 
-    public String toSQL(DatabaseType databaseType) {
+    String toSQL(DatabaseType databaseType) {
         StringBuffer buffer = new StringBuffer();
         String tableName = EasyDB.getModel(klass).table();
         buffer.append("SELECT * FROM " + tableName + " ");
@@ -94,7 +96,7 @@ public class Query<K> {
         Comparison comparison;
         Object value;
 
-        public WhereColumn(String column, Comparison comparison, Object value) {
+        WhereColumn(String column, Comparison comparison, Object value) {
             if (!map.containsKey(column)) {
                 throw new QueryException("Invalid column: " + column);
             }
@@ -103,7 +105,7 @@ public class Query<K> {
             this.value = value;
         }
 
-        public String toSQL() {
+        String toSQL() {
             return column + " " + comparisonSQL(comparison) + " ?";
         }
 
@@ -130,7 +132,7 @@ public class Query<K> {
         String column;
         SortOrder sortOrder;
 
-        public SortColumn(String column, SortOrder sortOrder) {
+        SortColumn(String column, SortOrder sortOrder) {
             if (!map.containsKey(column)) {
                 throw new QueryException("Invalid column: " + column);
             }
@@ -138,7 +140,7 @@ public class Query<K> {
             this.sortOrder = sortOrder;
         }
 
-        public String toSQL() {
+        String toSQL() {
             return column + " " + (sortOrder == SortOrder.Ascending ? "ASC" : "DESC");
         }
     }

@@ -1,5 +1,6 @@
 package no.laukvik.easydb;
 
+import no.laukvik.easydb.exception.QueryException;
 import org.junit.jupiter.api.Test;
 import static no.laukvik.easydb.SortOrder.Ascending;
 import static no.laukvik.easydb.SortOrder.Descending;

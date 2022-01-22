@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 
-public class Mapper {
+class Mapper {
 
-    public static HashMap<String, Field> extractFields(Class klass) {
+    static HashMap<String, Field> extractFields(Class klass) {
         HashMap<String, Field> map = new HashMap<>();
         for (Field f : klass.getDeclaredFields()) {
             f.setAccessible(true);
@@ -61,7 +61,7 @@ public class Mapper {
         return map;
     }
 
-    public static HashMap<String, Object> extractData(Object object) {
+    static HashMap<String, Object> extractData(Object object) {
         HashMap<String, Object> map = new HashMap<>();
         for (Field f : object.getClass().getDeclaredFields()) {
             f.setAccessible(true);

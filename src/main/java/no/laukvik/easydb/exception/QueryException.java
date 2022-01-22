@@ -1,4 +1,4 @@
-package no.laukvik.easydb;
+package no.laukvik.easydb.exception;
 
 public class QueryException extends IllegalStateException {
 

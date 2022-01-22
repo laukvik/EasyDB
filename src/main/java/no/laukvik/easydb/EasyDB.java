@@ -24,9 +24,9 @@ public class EasyDB {
         return connection;
     }
 
-    public static DatabaseModel getModel(Class klass) {
-        if (klass.isAnnotationPresent(DatabaseModel.class)) {
-            return ((DatabaseModel) klass.getAnnotation(DatabaseModel.class));
+    static Model getModel(Class klass) {
+        if (klass.isAnnotationPresent(Model.class)) {
+            return ((Model) klass.getAnnotation(Model.class));
         }
         throw new NoEntityException("Class is no valid entity: " + klass.getName());
     }
@@ -45,8 +45,8 @@ public class EasyDB {
         st.executeUpdate(DDL.deleteTable(klass));
     }
 
-    public Object getPrimaryKeyValue(Object object) {
-        DatabaseModel model = getModel(object.getClass());
+    Object getPrimaryKeyValue(Object object) {
+        Model model = getModel(object.getClass());
         HashMap<String, Object> map = Mapper.extractData(object);
         return map.get(model.id());
     }
@@ -65,7 +65,7 @@ public class EasyDB {
         }
     }
 
-    private void populateRs(DatabaseModel model, Object object, HashMap<String, Field> map, ResultSet rs) throws SQLException {
+    private void populateRs(Model model, Object object, HashMap<String, Field> map, ResultSet rs) throws SQLException {
         try {
             for (String columnName : map.keySet()) {
                 Field f = map.get(columnName);
@@ -111,7 +111,7 @@ public class EasyDB {
     }
 
     public void add(Object object) throws SQLException {
-        DatabaseModel model = getModel(object.getClass());
+        Model model = getModel(object.getClass());
         String tableName = model.table();
         HashMap<String, Field> map = Mapper.extractFields(object.getClass());
         Field f = map.get(model.id());
@@ -132,7 +132,7 @@ public class EasyDB {
     }
 
     public void update(Object instance) throws SQLException {
-        DatabaseModel model = getModel(instance.getClass());
+        Model model = getModel(instance.getClass());
         String tableName = model.table();
         HashMap<String, Field> map = Mapper.extractFields(instance.getClass());
         String sql = "SELECT * FROM " + tableName + " WHERE ID=?";
@@ -211,7 +211,7 @@ public class EasyDB {
         return o;
     }
 
-    public static LocalDate mapLocalDate(Date d) {
+    static LocalDate mapLocalDate(Date d) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(d);
         return LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));

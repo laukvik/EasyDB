@@ -5,16 +5,16 @@ import java.util.HashMap;
 
 import static no.laukvik.easydb.EasyDB.getModel;
 
-public class DDL {
+class DDL {
 
-    public static String deleteTable(Class klass) {
-        DatabaseModel model = getModel(klass);
+    static String deleteTable(Class klass) {
+        Model model = getModel(klass);
         String table = model.table();
         return "DROP TABLE " + table;
     }
 
-    public static String createTable(Class klass) {
-        DatabaseModel model = getModel(klass);
+    static String createTable(Class klass) {
+        Model model = getModel(klass);
         String table = model.table();
         HashMap<String, Field> map = Mapper.extractFields(klass);
         StringBuffer buffer = new StringBuffer(4000);
@@ -30,7 +30,7 @@ public class DDL {
         return "CREATE TABLE " + table + " (" + buffer + ")";
     }
 
-    public static String get(Field f, boolean auto) {
+    static String get(Field f, boolean auto) {
         if (f.isAnnotationPresent(IntegerValue.class)) {
             return getInteger(f.getAnnotation(IntegerValue.class), auto);
         }
@@ -55,34 +55,34 @@ public class DDL {
         return "";
     }
 
-    public static String getTimestampValue(TimestampValue value) {
+    static String getTimestampValue(TimestampValue value) {
         return value.column() + " TIMESTAMP";
     }
 
-    public static String getDate(DateValue value) {
+    static String getDate(DateValue value) {
         return value.column() + " DATE";
     }
 
-    public static String getBoolean(BooleanValue value) {
+    static String getBoolean(BooleanValue value) {
         return value.column() + " BOOLEAN";
     }
 
-    public static String getEnum(EnumValue value) {
+    static String getEnum(EnumValue value) {
         return value.column() + " VARCHAR(" + value.size() + ")";
     }
 
-    public static String getInteger(IntegerValue value, boolean auto) {
+    static String getInteger(IntegerValue value, boolean auto) {
         if (auto) {
             return value.column() + " INT NOT NULL GENERATED ALWAYS AS IDENTITY";
         }
         return value.column() + " INT";
     }
 
-    public static String getFloat(FloatValue value) {
+    static String getFloat(FloatValue value) {
         return value.column() + " REAL";
     }
 
-    public static String getString(StringValue value) {
+    static String getString(StringValue value) {
         if (value.size() < 0) {
             throw new IllegalStateException("Size must be positive");
         }
