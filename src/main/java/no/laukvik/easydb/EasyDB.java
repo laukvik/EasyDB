@@ -1,6 +1,7 @@
 package no.laukvik.easydb;
 
 import no.laukvik.easydb.exception.NoEntityException;
+import no.laukvik.easydb.exception.NoReportException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -245,6 +246,36 @@ public class EasyDB {
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
+        }
+        return list;
+    }
+
+    static Report getReport(Class klass) {
+        if (klass.isAnnotationPresent(Report.class)) {
+            return ((Report) klass.getAnnotation(Report.class));
+        }
+        throw new NoReportException("Class is no valid report: " + klass.getName());
+    }
+
+    public List buildReport(Object object) throws SQLException, IllegalAccessException {
+        Report report = getReport(object.getClass());
+        Class klass = report.item();
+        HashMap<String,Field> map = Mapper.extractFields(klass);
+        PreparedStatement st = getConnection().prepareStatement(report.query());
+        for (Field f : object.getClass().getDeclaredFields()) {
+            f.setAccessible(true);
+            if (f.isAnnotationPresent(ReportParam.class)) {
+                ReportParam param = f.getAnnotation(ReportParam.class);
+                // TODO - Lage støtte for flere datatyper
+                if (f.getType() == boolean.class){
+                    st.setBoolean(param.index(), f.getBoolean(object));
+                }
+            }
+        }
+        ResultSet rs = st.executeQuery();
+        List list = new ArrayList();
+        while (rs.next()) {
+            list.add(populateObject(klass, rs, map));
         }
         return list;
     }

@@ -192,6 +192,21 @@ class EasyDBTest {
         assertEquals("First 5", list.get(0).first);
     }
 
+    @Test()
+    void shouldBuildReport() throws SQLException, IllegalAccessException {
+        for (int x=1; x<6; x++){
+            Employee mock = mockEmployee();
+            mock.id = null;
+            mock.first = "First " + x;
+            mock.cash = 1000f * x;
+            db.add(mock);
+        }
+        TimeReport report = new TimeReport();
+        report.active = true;
+        List list = db.buildReport(report);
+        assertEquals(5, list.size());
+    }
+
     Employee mockEmployee(){
         Employee emp = new Employee();
         emp.active = true;
