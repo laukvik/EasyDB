@@ -1,6 +1,6 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
-import no.laukvik.easydb.exception.QueryException;
+import no.laukvik.orm.exception.QueryException;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -39,7 +39,7 @@ public class Query<K> {
 
     String toSQL(DatabaseType databaseType) {
         StringBuffer buffer = new StringBuffer();
-        String tableName = EasyDB.getModel(klass).table();
+        String tableName = EntityManager.getModel(klass).table();
         buffer.append("SELECT * FROM " + tableName + " ");
         if (!columns.isEmpty()) {
             buffer.append("WHERE ");

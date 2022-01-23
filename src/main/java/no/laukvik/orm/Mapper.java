@@ -1,6 +1,6 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
-import no.laukvik.easydb.exception.MappingException;
+import no.laukvik.orm.exception.MappingException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

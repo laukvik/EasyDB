@@ -1,4 +1,4 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
 @Report(query="select FIRST_NAME from employee where IS_ACTIVE=?",item=TimeReport.Item.class)
 public class TimeReport {

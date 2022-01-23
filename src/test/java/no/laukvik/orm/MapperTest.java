@@ -1,10 +1,9 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
-import no.laukvik.easydb.exception.MappingException;
+import no.laukvik.orm.exception.MappingException;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;

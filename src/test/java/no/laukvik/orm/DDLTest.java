@@ -1,4 +1,4 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
 import org.junit.jupiter.api.Test;
 

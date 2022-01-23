@@ -1,4 +1,4 @@
-package no.laukvik.easydb.exception;
+package no.laukvik.orm.exception;
 
 public class MappingException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

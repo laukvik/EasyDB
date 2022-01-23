@@ -1,6 +1,6 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
-import no.laukvik.easydb.exception.NoEntityException;
+import no.laukvik.orm.exception.NoEntityException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +17,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class EasyDBTest {
+class EntityManagerTest {
 
-    EasyDB db;
+    EntityManager db;
 
     @BeforeAll
     void before() throws SQLException {
@@ -26,7 +27,7 @@ class EasyDBTest {
         String user = "";
         String password = "";
         Connection connection = DriverManager.getConnection(url, user, password);
-        db = new EasyDB(DatabaseType.ApacheDerby, connection);
+        db = new EntityManager(DatabaseType.ApacheDerby, connection);
         try {
             db.deleteModel(Employee.class);
         } catch (SQLException e) {
@@ -41,14 +42,18 @@ class EasyDBTest {
 
     @Test
     void shouldMapLocalDate() {
-        assertEquals(LocalDate.of(2022, 1, 22), EasyDB.mapLocalDate(new Date()));
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2022);
+        cal.set(Calendar.MONTH, Calendar.JANUARY);
+        cal.set(Calendar.DAY_OF_MONTH, 22);
+        assertEquals(LocalDate.of(2022, 1, 22), EntityManager.mapLocalDate(cal.getTime()));
     }
 
     @Test
     void shouldFindAnnotation() {
-        assertEquals("EMPLOYEE", EasyDB.getModel(Employee.class).table());
+        assertEquals("EMPLOYEE", EntityManager.getModel(Employee.class).table());
         assertThrows(NoEntityException.class, () -> {
-            EasyDB.getModel(String.class).table();
+            EntityManager.getModel(String.class).table();
         });
     }
 

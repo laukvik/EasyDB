@@ -1,4 +1,4 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
 import java.time.LocalDate;
 import java.util.Date;

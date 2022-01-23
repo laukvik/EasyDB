@@ -1,9 +1,9 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
-import no.laukvik.easydb.exception.QueryException;
+import no.laukvik.orm.exception.QueryException;
 import org.junit.jupiter.api.Test;
-import static no.laukvik.easydb.SortOrder.Ascending;
-import static no.laukvik.easydb.SortOrder.Descending;
+import static no.laukvik.orm.SortOrder.Ascending;
+import static no.laukvik.orm.SortOrder.Descending;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QueryTest {

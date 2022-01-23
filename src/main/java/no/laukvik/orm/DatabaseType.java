@@ -1,4 +1,4 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
 public enum DatabaseType {
     ApacheDerby, Postgres, Mysql

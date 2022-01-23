@@ -1,9 +1,9 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import static no.laukvik.easydb.EasyDB.getModel;
+import static no.laukvik.orm.EntityManager.getModel;
 
 class DDL {
 

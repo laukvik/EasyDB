@@ -1,7 +1,7 @@
-package no.laukvik.easydb;
+package no.laukvik.orm;
 
-import no.laukvik.easydb.exception.NoEntityException;
-import no.laukvik.easydb.exception.NoReportException;
+import no.laukvik.orm.exception.NoEntityException;
+import no.laukvik.orm.exception.NoReportException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -11,12 +11,12 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.*;
 
-public class EasyDB {
+public class EntityManager {
 
     private Connection connection;
     private DatabaseType databaseType;
 
-    public EasyDB(DatabaseType databaseType, Connection connection) {
+    public EntityManager(DatabaseType databaseType, Connection connection) {
         this.connection = connection;
         this.databaseType = databaseType;
     }
