@@ -286,15 +286,20 @@ public class EntityManager {
                 f.setAccessible(true);
                 if (f.isAnnotationPresent(ReportParam.class)) {
                     ReportParam param = f.getAnnotation(ReportParam.class);
-                    // TODO - Lage støtte for flere datatyper
                     if (f.getType() == boolean.class) {
                         st.setBoolean(param.index(), f.getBoolean(object));
                     }
                     if (f.getType() == Boolean.class) {
                         st.setBoolean(param.index(), (Boolean) f.get(object));
                     }
+                    if (f.getType() == int.class) {
+                        st.setInt(param.index(), f.getInt(object));
+                    }
                     if (f.getType() == Integer.class) {
                         st.setBoolean(param.index(), (Boolean) f.get(object));
+                    }
+                    if (f.getType() == float.class) {
+                        st.setFloat(param.index(), f.getFloat(object));
                     }
                     if (f.getType() == Float.class) {
                         st.setBoolean(param.index(), (Boolean) f.get(object));
@@ -302,12 +307,24 @@ public class EntityManager {
                     if (f.getType() == String.class) {
                         st.setString(param.index(), (String) f.get(object));
                     }
+                    if (f.getType() == Date.class) {
+                        st.setTimestamp(param.index(), new java.sql.Timestamp(((Date) f.get(object)).getTime()));
+                    }
+                    if (f.getType() == LocalDate.class) {
+                        LocalDate d = (LocalDate) f.get(object);
+                        Calendar cal = Calendar.getInstance();
+                        cal.set(Calendar.YEAR, d.getYear());
+                        cal.set(Calendar.MONTH, d.getMonthValue());
+                        cal.set(Calendar.DAY_OF_MONTH, d.getDayOfMonth());
+                        st.setDate(param.index(), new java.sql.Date(cal.getTime().getTime()));
+                    }
                 }
             }
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                list.add(populateObject(klass, rs, map));
-            }
+            try(ResultSet rs = st.executeQuery()){
+                while (rs.next()) {
+                    list.add(populateObject(klass, rs, map));
+                }
+            };
         }
         return list;
     }
