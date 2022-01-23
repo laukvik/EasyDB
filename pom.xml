@@ -4,7 +4,7 @@
 
     <groupId>no.laukvik</groupId>
     <artifactId>EasyDB</artifactId>
-    <version>0.1</version>
+    <version>0.1-alpha</version>
 
     <properties>
         <java.version>12</java.version>
