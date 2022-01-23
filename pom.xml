@@ -7,12 +7,37 @@
     <version>0.1.3-alpha</version>
     <packaging>jar</packaging>
 
+    <name>ORM</name>
+    <description>A lightweight database ORM mapping library.</description>
+    <url>https://github.com/laukvik/ORM</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/laukvik/ORM</url>
+        <tag>main</tag>
+    </scm>
+
+    <issueManagement>
+        <url>https://github.com/laukvik/ORM/issues</url>
+        <system>GitHub</system>
+    </issueManagement>
+
     <properties>
         <java.version>11</java.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+
 
     <distributionManagement>
         <repository>
