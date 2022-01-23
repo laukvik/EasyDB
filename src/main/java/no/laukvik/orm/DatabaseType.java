@@ -1,5 +1,5 @@
 package no.laukvik.orm;
 
 public enum DatabaseType {
-    ApacheDerby, Postgres, Mysql
+    ApacheDerby, Postgres, Mysql, Oracle
 }

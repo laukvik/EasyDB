@@ -3,21 +3,6 @@ package no.laukvik.orm;
 import java.time.LocalDate;
 import java.util.Date;
 
-/**
-
-CREATE TABLE EMPLOYEE (
-    ID INT NOT NULL,
-    EMPLOYEE_NR INT,
-    hired DATE,
-    IS_ACTIVE BOOLEAN,
-    created TIMESTAMP,
-    EMPLOYEE_TYPE INT,
-    FIRST_NAME VARCHAR(50)
-)
-
-*/
-
-// https://www.postgresql.org/docs/9.5/datatype.html
 @Model(table="EMPLOYEE", id="ID", auto=true)
 public class Employee {
 
