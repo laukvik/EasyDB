@@ -33,11 +33,7 @@ class EntityManagerTest {
         } catch (SQLException e) {
 //            e.printStackTrace();
         }
-        try {
-            db.createModel(Employee.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        db.createModel(Employee.class);
     }
 
     @Test

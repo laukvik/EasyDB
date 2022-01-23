@@ -36,14 +36,20 @@ public class EntityManager {
         return getModel(klass).table();
     }
 
-    public void createModel(Class klass) throws SQLException {
-        Statement st = getConnection().createStatement();
-        st.executeUpdate(DDL.createTable(klass));
+    public void createModel(Class klass) {
+        try (Statement st = getConnection().createStatement()) {
+            st.executeUpdate(DDL.createTable(klass));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     public void deleteModel(Class klass) throws SQLException {
-        Statement st = getConnection().createStatement();
-        st.executeUpdate(DDL.deleteTable(klass));
+        try (Statement st = getConnection().createStatement()) {
+            st.executeUpdate(DDL.deleteTable(klass));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     Object getPrimaryKeyValue(Object object) {
@@ -111,24 +117,28 @@ public class EntityManager {
         }
     }
 
-    public void add(Object object) throws SQLException {
+    public void add(Object object) {
         Model model = getModel(object.getClass());
         String tableName = model.table();
         HashMap<String, Field> map = Mapper.extractFields(object.getClass());
         Field f = map.get(model.id());
         f.setAccessible(true);
         String sql = "SELECT * FROM " + tableName;
-        PreparedStatement st = getConnection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-        ResultSet rs = st.executeQuery();
-        rs.moveToInsertRow();
-        populateRs(getModel(object.getClass()), object, map, rs);
-        rs.insertRow();
-        rs.last();
-        Integer id = rs.getInt(model.id());
-        try {
-            f.set(object, id);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        try (PreparedStatement st = getConnection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+            try (ResultSet rs = st.executeQuery()) {
+                rs.moveToInsertRow();
+                populateRs(getModel(object.getClass()), object, map, rs);
+                rs.insertRow();
+                rs.last();
+                Integer id = rs.getInt(model.id());
+                try {
+                    f.set(object, id);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 
@@ -137,42 +147,47 @@ public class EntityManager {
         String tableName = model.table();
         HashMap<String, Field> map = Mapper.extractFields(instance.getClass());
         String sql = "SELECT * FROM " + tableName + " WHERE ID=?";
-        PreparedStatement st = getConnection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-        st.setObject(1, getPrimaryKeyValue(instance));
-        ResultSet rs = st.executeQuery();
-        if (rs.next()) {
-            populateRs(getModel(instance.getClass()), instance, map, rs);
-            rs.updateRow();
+        try (PreparedStatement st = getConnection().prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)){
+            st.setObject(1, getPrimaryKeyValue(instance));
+            try (ResultSet rs = st.executeQuery()){
+                if (rs.next()) {
+                    populateRs(getModel(instance.getClass()), instance, map, rs);
+                    rs.updateRow();
+                }
+            }
         }
-
     }
 
     public void remove(Object instance) throws SQLException {
         String tableName = getTableName(instance.getClass());
         String sql = "DELETE FROM " + tableName + " WHERE ID=?";
-        PreparedStatement st = getConnection().prepareStatement(sql);
-        st.setObject(1, getPrimaryKeyValue(instance));
-        st.executeUpdate();
+        try(PreparedStatement st = getConnection().prepareStatement(sql)) {
+            st.setObject(1, getPrimaryKeyValue(instance));
+            st.executeUpdate();
+        }
     }
 
     public void removeAll(Class klass) throws SQLException {
         String tableName = getTableName(klass);
-        PreparedStatement st = getConnection().prepareStatement("DELETE FROM " + tableName);
-        st.executeUpdate();
+        try(PreparedStatement st = getConnection().prepareStatement("DELETE FROM " + tableName)) {
+            st.executeUpdate();
+        }
     }
 
     public Optional findById(Object id, Class instance) throws SQLException {
         String tableName = getTableName(instance);
         HashMap<String, Field> map = Mapper.extractFields(instance);
         String sql = "SELECT * FROM " + tableName + " WHERE ID=?";
-        PreparedStatement st = getConnection().prepareStatement(sql);
-        st.setObject(1, id);
-        ResultSet rs = st.executeQuery();
-        if (rs.next()) {
-            try {
-                return Optional.of(populateObject(instance, rs, map));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+        try (PreparedStatement st = getConnection().prepareStatement(sql)){
+            st.setObject(1, id);
+            try (ResultSet rs = st.executeQuery()){
+                if (rs.next()) {
+                    try {
+                        return Optional.of(populateObject(instance, rs, map));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         return Optional.empty();
@@ -222,14 +237,16 @@ public class EntityManager {
         String tableName = getTableName(k);
         HashMap<String, Field> map = Mapper.extractFields(k);
         String sql = "SELECT * FROM " + tableName;
-        PreparedStatement st = getConnection().prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-        ResultSet rs = st.executeQuery();
         List<K> list = new ArrayList<K>();
-        while (rs.next()) {
-            try {
-                list.add((K) populateObject(k, rs, map));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+        try(PreparedStatement st = getConnection().prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+            try(ResultSet rs = st.executeQuery()){
+                while (rs.next()) {
+                    try {
+                        list.add((K) populateObject(k, rs, map));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         return list;
@@ -237,14 +254,16 @@ public class EntityManager {
 
     public List findByQuery(Query query) throws SQLException {
         HashMap<String, Field> map = Mapper.extractFields(query.getQueryClass());
-        PreparedStatement st = query.getPreparedStatement(databaseType, getConnection());
-        ResultSet rs = st.executeQuery();
         List list = new ArrayList();
-        while (rs.next()) {
-            try {
-                list.add(populateObject(query.getQueryClass(), rs, map));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+        try (PreparedStatement st = query.getPreparedStatement(databaseType, getConnection())){
+            try (ResultSet rs = st.executeQuery()){
+                while (rs.next()) {
+                    try {
+                        list.add(populateObject(query.getQueryClass(), rs, map));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         return list;
@@ -261,33 +280,34 @@ public class EntityManager {
         Report report = getReport(object.getClass());
         Class klass = report.item();
         HashMap<String,Field> map = Mapper.extractFields(klass);
-        PreparedStatement st = getConnection().prepareStatement(report.query());
-        for (Field f : object.getClass().getDeclaredFields()) {
-            f.setAccessible(true);
-            if (f.isAnnotationPresent(ReportParam.class)) {
-                ReportParam param = f.getAnnotation(ReportParam.class);
-                // TODO - Lage støtte for flere datatyper
-                if (f.getType() == boolean.class) {
-                    st.setBoolean(param.index(), f.getBoolean(object));
-                }
-                if (f.getType() == Boolean.class) {
-                    st.setBoolean(param.index(), (Boolean) f.get(object));
-                }
-                if (f.getType() == Integer.class) {
-                    st.setBoolean(param.index(), (Boolean) f.get(object));
-                }
-                if (f.getType() == Float.class) {
-                    st.setBoolean(param.index(), (Boolean) f.get(object));
-                }
-                if (f.getType() == String.class) {
-                    st.setString(param.index(), (String) f.get(object));
+        List list = new ArrayList();
+        try (PreparedStatement st = getConnection().prepareStatement(report.query())){
+            for (Field f : object.getClass().getDeclaredFields()) {
+                f.setAccessible(true);
+                if (f.isAnnotationPresent(ReportParam.class)) {
+                    ReportParam param = f.getAnnotation(ReportParam.class);
+                    // TODO - Lage støtte for flere datatyper
+                    if (f.getType() == boolean.class) {
+                        st.setBoolean(param.index(), f.getBoolean(object));
+                    }
+                    if (f.getType() == Boolean.class) {
+                        st.setBoolean(param.index(), (Boolean) f.get(object));
+                    }
+                    if (f.getType() == Integer.class) {
+                        st.setBoolean(param.index(), (Boolean) f.get(object));
+                    }
+                    if (f.getType() == Float.class) {
+                        st.setBoolean(param.index(), (Boolean) f.get(object));
+                    }
+                    if (f.getType() == String.class) {
+                        st.setString(param.index(), (String) f.get(object));
+                    }
                 }
             }
-        }
-        ResultSet rs = st.executeQuery();
-        List list = new ArrayList();
-        while (rs.next()) {
-            list.add(populateObject(klass, rs, map));
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                list.add(populateObject(klass, rs, map));
+            }
         }
         return list;
     }
