@@ -267,8 +267,20 @@ public class EasyDB {
             if (f.isAnnotationPresent(ReportParam.class)) {
                 ReportParam param = f.getAnnotation(ReportParam.class);
                 // TODO - Lage støtte for flere datatyper
-                if (f.getType() == boolean.class){
+                if (f.getType() == boolean.class) {
                     st.setBoolean(param.index(), f.getBoolean(object));
+                }
+                if (f.getType() == Boolean.class) {
+                    st.setBoolean(param.index(), (Boolean) f.get(object));
+                }
+                if (f.getType() == Integer.class) {
+                    st.setBoolean(param.index(), (Boolean) f.get(object));
+                }
+                if (f.getType() == Float.class) {
+                    st.setBoolean(param.index(), (Boolean) f.get(object));
+                }
+                if (f.getType() == String.class) {
+                    st.setString(param.index(), (String) f.get(object));
                 }
             }
         }

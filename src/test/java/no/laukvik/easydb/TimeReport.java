@@ -4,7 +4,7 @@ package no.laukvik.easydb;
 public class TimeReport {
 
     @ReportParam(index=1)
-    boolean active;
+    Boolean active;
 
     public static class Item {
         @StringValue(column="FIRST_NAME")
