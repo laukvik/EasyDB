@@ -4,7 +4,7 @@
 
     <groupId>no.laukvik</groupId>
     <artifactId>ORM</artifactId>
-    <version>0.1-alpha</version>
+    <version>0.1.1-alpha</version>
 
     <properties>
         <java.version>11</java.version>
