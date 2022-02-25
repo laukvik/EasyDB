@@ -15,7 +15,7 @@ class MapperTest {
     @Test
     void shouldFailExtractFields(){
         Invalid obj = new Invalid();
-        assertThrowsExactly(MappingException.class, ()-> {
+        assertThrows(MappingException.class, ()-> {
            Mapper.extractFields(obj.getClass());
         });
     }
