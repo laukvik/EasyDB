@@ -7,7 +7,6 @@
  */
 
 plugins {
-    // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
     id 'maven-publish'
 }
@@ -17,8 +16,19 @@ version = '0.1.2'
 description = 'orm'
 
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }
 
 dependencies {
