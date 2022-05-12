@@ -5,15 +5,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -23,11 +20,11 @@ class EntityManagerTest {
 
     @BeforeAll
     void before() throws SQLException {
-        String url = "jdbc:derby:./target/Derby;create=true";
+        String url = "jdbc:derby:./build/Derby;create=true";
         String user = "";
         String password = "";
-        Connection connection = DriverManager.getConnection(url, user, password);
-        db = new EntityManager(DatabaseType.ApacheDerby, connection);
+
+        db = new EntityManager(new TestDatasource(user, password, url), DatabaseType.ApacheDerby);
         try {
             db.deleteModel(Employee.class);
         } catch (SQLException e) {
