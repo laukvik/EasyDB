@@ -34,17 +34,12 @@ tasks {
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-        }
-    }
-    repositories {
-        maven {
-            url = uri("https://maven.pkg.github.com/laukvik/${rootProject.name}")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
+        maven(MavenPublication) {
+            groupId = 'no.laukvik'
+            artifactId = 'orm'
+            version = '0.1.3'
+
+            from components.java
         }
     }
 }
