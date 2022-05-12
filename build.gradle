@@ -14,7 +14,7 @@ plugins {
 
 group = 'no.laukvik'
 version = '0.1.2'
-description = 'ORM'
+description = 'orm'
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -34,24 +34,17 @@ tasks {
 
 publishing {
     publications {
-        csv(MavenPublication) {
-            pom {
-                name.set("orm")
-                description.set("")
-                url.set("https://github.com/laukvik/ORM")
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("https://opensource.org/licenses/MIT")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:https://github.com/laukvik/ORM.git")
-                    developerConnection.set("scm:git:https://github.com/laukvik/ORM.git")
-                    url.set("https://github.com/laukvik/ORM")
-                }
-            }
+        create<MavenPublication>("mavenJava") {
             from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/laukvik/${rootProject.name}")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
         }
     }
 }
