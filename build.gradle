@@ -38,7 +38,7 @@ tasks {
 
 publishing {
     publications {
-        library(MavenPublication) {
+        orm(MavenPublication) {
             from components.java
         }
     }
