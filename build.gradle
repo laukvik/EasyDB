@@ -38,19 +38,8 @@ tasks {
 
 publishing {
     publications {
-        create(MavenPublication) {
-            pom {
-                name.set("orm")
-                description.set("")
-                url.set("https://github.com/laukvik/ORM")
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("https://opensource.org/licenses/MIT")
-                    }
-                }
-            }
-            from(components["java"])
+        library(MavenPublication) {
+            from components.java
         }
     }
 }
